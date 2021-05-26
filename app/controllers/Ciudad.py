@@ -1,37 +1,48 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
 #Model
 from app.model.Ciudad import Ciudad
 
 
-ciudad = Blueprint('ciudad', __name__)
+ciudad = Blueprint('ciudad', __name__, url_prefix="/ciudad/")
 
-@ciudad.route("/ciudad")
+##listar todas las ciudades
+@ciudad.route("list")
 def getciudad():
-    #instanciar el modelo
     ciudad = Ciudad()
-    # controler = Controller()
+    data = ciudad.listaCiudades()
+    return jsonify({"Ciudades": data,"message":"ok"})
 
-    data = ciudad.buscarCiudad("Bogotá")
+#traer una ciudad especifica
+@ciudad.route("")
+def insertCiudad():
+    ciudad = Ciudad()
+    data = ciudad.buscarCiudad(request.json["ciudad"])
     return jsonify({"Ciudad": data,"message":"ok"})
 
-
-@ciudad.route("/ciudad/<string:ciudad_nombre>")
-def insertCiudad(ciudad_nombre):
-    # instanciar el modelo
+#Crear una ciudad nueva
+@ciudad.route("", methods=["POST"])
+def nuevaCiudad():
     ciudad = Ciudad()
-
-    data = ciudad.insertCiudad(ciudad_nombre)
+    data = ciudad.insertCiudad(request.json["ciudad"])
     return jsonify({"Ciudad": data,"message":"ok"})
 
+#Crear una ciudad nueva
+@ciudad.route("", methods=["DELETE"])
+def borrarCiudad():
+    ciudad = Ciudad()
+    ciudadPost = request.json["ciudad"]
+    ciudad.borrarCiudad(ciudadPost)
+    return jsonify({"Ciudad": ciudadPost,"message":"ok"})
 
-# @app.route("/products", methods=["POST"])
-# def addProduct():
-#     print(request.json)
-#     new_product = {
-#         "name": request.json["name"],
-#         "price": request.json["price"],
-#         "quantity": request.json["quantity"]
-#     }
-#     products.append(new_product)
-#     return jsonify({"message": "Product added successfully", "products": products})
+#Actualizar una ciudad
+@ciudad.route("", methods=["PUT"])
+def actualizarCiudad():
+    ciudad = Ciudad()
+
+    data = ciudad.actualizarCiudad(request.json["ciudad"],request.json["nuevaCiudad"])
+    return jsonify({
+        "ciudad": request.json["ciudad"],
+        "nuevaCiudad": data,
+        "message":"ok"
+        })
