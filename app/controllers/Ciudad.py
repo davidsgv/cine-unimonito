@@ -18,7 +18,10 @@ def getciudad():
 def insertCiudad():
     ciudad = Ciudad()
     data = ciudad.buscarCiudad(request.json["ciudad"])
-    return jsonify({"Ciudad": data,"message":"ok"})
+    return jsonify({
+        "Ciudad": data,
+        "message":"ok"
+    })
 
 #Crear una ciudad nueva
 @ciudad.route("", methods=["POST"])
